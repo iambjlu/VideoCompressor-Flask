@@ -1,8 +1,6 @@
 #########
 '''
 使用前記得先安裝 ffmpeg
-Install ffmpeg before use
-
 sudo apt update
 sudo apt install ffmpeg
 '''
@@ -30,13 +28,25 @@ os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 INDEX_HTML = '''
 <!DOCTYPE html>
 <html>
-<head><title>影片壓縮器</title></head>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1, maximum-scale=1">
+<title>影片壓縮器</title>
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<style>
+    body {
+            font-family: '-apple-system', 'BlinkMacSystemFont', 'SF Pro', 'SF Pro Display', 'PingFang TC', 'Inter', 'Roboto', 'AppleGothic', 'Microsoft JhengHei UI', sans-serif;
+            padding: 20px;
+            background-color: #d9d9d9;
+        }
+</style>
+</head>
 <body>
     <h2>影片壓縮器</h2>
-    <p>支援 MP4/MOV/MKV/AVI，原始檔案大小上限 50MB。<br>壓縮後最高可達1080p。<br>為確保資料安全，壓縮後隨即刪除原始影片、兩分鐘後刪除壓縮後的影片。</p>
+    <p>支援 MP4/MOV/MKV/AVI，原始檔案大小上限 50MB。<br>壓縮後最高可達1080p，非常適合用於Discord等場景<br><br>為確保資料安全，<br>壓縮後隨即刪除原始影片、兩分鐘後刪除壓縮後的影片。</p>
     <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="video/*" required>
-        <input type="submit" value="上傳並壓縮">
+        <input type="file" name="file" accept="video/*" class="mdl-button mdl-js-button mdl-button--raised" required><br><br>
+        <input type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" value="上傳並壓縮">
     </form>
 </body>
 </html>
@@ -46,7 +56,17 @@ INDEX_HTML = '''
 RESULT_HTML = '''
 <!DOCTYPE html>
 <html>
-<head><title>壓縮完成</title></head>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1, maximum-scale=1">
+<title>壓縮完成</title>
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<style>
+    body {
+            font-family: '-apple-system', 'BlinkMacSystemFont', 'SF Pro', 'SF Pro Display', 'PingFang TC', 'Inter', 'Roboto', 'AppleGothic', 'Microsoft JhengHei UI', sans-serif;
+        }
+</style>
+</head>
 <body>
     <h3>✅ 壓縮成功！</h3>
     <p>請在 2 分鐘內下載，檔案將自動刪除：</p>
@@ -101,7 +121,7 @@ def upload_file():
                 compress_video(input_path, output_path)
                 os.remove(input_path)
                 schedule_deletion(output_path, delay=120)
-                # ✅ 改為 redirect 到結果頁面，防止刷新重複壓縮
+                #redirect 到結果頁面，防止刷新重複壓縮
                 return redirect(url_for('result_page', filename=output_filename))
             except Exception as e:
                 return f"❌ 壓縮失敗：{e}"
